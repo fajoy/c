@@ -4,7 +4,7 @@
 //ref http://www.gnu.org/software/libc/manual/html_node/Line-Input.html
 //ref http://www.gnu.org/software/octave/doc/interpreter/Formatted-Output.html
 int
-main()
+main (int argc, char *argv[], char *envp[])
 {
     char *buf;
     size_t n = 0;
