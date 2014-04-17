@@ -9,7 +9,7 @@ EXECUTABLE=hello
 all: $(EXECUTABLE)
     
 $(EXECUTABLE): $(SOURCES) 
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) -o $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) -o $(EXECUTABLE).o
 
 clean:
 	rm -f *.o
