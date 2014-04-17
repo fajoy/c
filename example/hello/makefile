@@ -4,7 +4,7 @@ CFLAGS=-Wall
 LDFLAGS=
 SOURCES=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.o,$(wildcard *.c))
-EXECUTABLE=hello
+EXECUTABLE=$(notdir  ,$(CURDIR))
 
 all: $(EXECUTABLE)
     
