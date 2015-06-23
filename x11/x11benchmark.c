@@ -64,7 +64,8 @@ int main(int argc,char* argv[]){
 		{
 			break;
 		}
-			c++;
+		XDestroyImage(image);
+		c++;
 	}
 
 	fprintf(stderr,"wid:0x%x ms:%llu capture:%llu\n",wid,(long long)(now()-startTs),c);

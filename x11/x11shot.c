@@ -126,5 +126,6 @@ int main(int argc,char* argv[]){
 		die("Can't get image");
 	}
 	pngstdout(image);
+	XDestroyImage(image);
 	return 0;
 };
