@@ -67,7 +67,7 @@ int main(int argc,char* argv[]){
 		XDestroyImage(image);
 		c++;
 	}
-
-	fprintf(stderr,"wid:0x%x ms:%llu capture:%llu\n",wid,(long long)(now()-startTs),c);
+	long long interval=(long long)(now()-startTs);
+	fprintf(stderr,"wid:0x%x ms:%llu capture:%llu fps:%0.2f\n",wid,interval,c,c*1000.0/interval);
 	return 0;
 };
