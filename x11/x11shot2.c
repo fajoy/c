@@ -6,6 +6,9 @@
 #include <X11/Xlibint.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/shape.h>
+#include <X11/extensions/XShm.h>
+#include <X11/extensions/Xfixes.h>
 #include <sys/shm.h>
 #include <sys/time.h>
 #include<signal.h>
@@ -95,14 +98,15 @@ pngstdout(XImage *img)
 	png_destroy_write_struct(&png_struct_p, NULL);
 }
 
-// gcc -Wall  x11shot.c -o x11shot -lX11 -lpng;./x11shot <wid> >/tmp/screenshot.png
+// gcc -Wall  x11shot2.c -o x11shot2 -lX11 -lX11ext -lpng;./x11shot2 <wid> >/tmp/screenshot.png
 int main(int argc,char* argv[]){
 	if(argc<2){
-		fprintf(stderr, "usage:x11shot <wid> >/tmp/screenshot.png\n");
+		fprintf(stderr, "usage:x11shot2 <wid> >/tmp/screenshot.png\n");
 		exit(1);
 	}
 	int wid=(int)strtol(argv[1], NULL, 0);
 	sscanf(argv[1], "%x", &wid);
+	XShmSegmentInfo shminfo;
 	int x_off=0,y_off=0;
 	Display *dpy=XOpenDisplay(getenv("DISPLAY"));
 	XImage *image;
@@ -117,12 +121,30 @@ int main(int argc,char* argv[]){
 			,wid
 			,wattr.x,wattr.y
 			,wattr.width,wattr.height);
-	image = XGetImage(dpy,
-			wid
-			,x_off,y_off,
-			wattr.width,wattr.height,
-			AllPlanes, ZPixmap);
-	if (image == NULL)
+
+	if(!XShmQueryExtension(dpy)){
+		fprintf(stderr, "can't not use shm!\n");
+		exit(1);
+	}
+	int scr = XDefaultScreen(dpy);
+	image = XShmCreateImage(dpy,
+			DefaultVisual(dpy, scr),
+			DefaultDepth(dpy, scr),
+			ZPixmap,
+			NULL,
+			&shminfo,
+			wattr.width,wattr.height);
+	shminfo.shmid = shmget(IPC_PRIVATE,
+			image->bytes_per_line * image->height,
+			IPC_CREAT|0777);
+	shminfo.shmaddr = image->data = shmat(shminfo.shmid, 0, 0);
+	shminfo.readOnly = False;
+	if (!XShmAttach(dpy, &shminfo)) {
+		fprintf(stderr, "Fatal: Failed to attach shared memory!\n");
+		exit(1);
+	}
+
+	if(!XShmGetImage(dpy,wid,image,x_off,y_off,AllPlanes))
 	{
 		die("Can't get image");
 	}
