@@ -8,4 +8,4 @@ x11shot2:
 x11benchmark2:
 	gcc -Wall  x11benchmark2.c -o x11benchmark2 -lX11 -lXext
 clean:
-	rm x11shot x11benchmark x11shot2 x11benchmark2
+	rm x11shot x11benchmark x11shot2 x11benchmark2 || /bin/true
